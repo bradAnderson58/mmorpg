@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
-import * as img from "./assets/logo.png";
-//const img = require('./assets/logo.png');
+import * as img from "./assets/menu_background.jpg";
+//import * as font from "./fonts/Pixel-Noir.ttf";
+
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -9,12 +10,24 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export class GameScene extends Phaser.Scene {
-  private square: Phaser.GameObjects.Rectangle & {body: Phaser.Physics.Arcade.Body};
+  private menuContainer: Phaser.GameObjects.Container;
+  private menu: Phaser.GameObjects.Rectangle & {body: Phaser.Physics.Arcade.Body};
   private loading: Phaser.GameObjects.Text;
-  private background: Phaser.GameObjects.Sprite;
+  private background: Phaser.GameObjects.Image;
+  private header: Phaser.GameObjects.Text;
+  private midX: number;
+  private midY: number;
+  private center: number = 0;
+  private fontSize: number = 32;
+  private menuMargin: number = 10;
 
   constructor() {
     super(sceneConfig);
+  }
+
+  public init(): void {
+    this.midX = window.innerWidth / 2;
+    this.midY = window.innerHeight / 2;
   }
 
   public preload(): void {
@@ -23,20 +36,52 @@ export class GameScene extends Phaser.Scene {
   }
 
   public create() {
-    this.background = this.add.sprite(400, 300, 'background');
-    console.log(this.background);
-    this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF) as any;
-    this.physics.add.existing(this.square);
+    this.background = this.add.image(0, 0, 'background')
+      .setOrigin(0, 0)
+      .setDisplaySize(window.innerWidth, window.innerHeight);
+
+    this.menuContainer = this.add.container(this.midX, this.midY);
+
+    this.menu = this.createMenuBox();
+    this.header = this.createMenuHeader();
+
+    this.menuContainer.add([this.menu, this.header]);
 
     this.loading.destroy();
   }
 
   public update() {
     const cursorKeys = this.input.keyboard.createCursorKeys();
-    if (cursorKeys.up.isDown) {
-      this.square.body.setVelocityY(-500);
-    } else {
-      this.square.body.setVelocityY(0);
-    }
+
+  }
+
+  private createMenuBox(): any {
+    const menu = this.add.rectangle(
+      this.center, this.center,
+      500,
+      500,
+      0x311047
+    ) as any;
+    this.physics.add.existing(menu);
+    return menu;
+  }
+
+  private createMenuHeader(): Phaser.GameObjects.Text {
+    const headerStyle = {
+      font: 'game-font',
+      fill: "#6c855d",
+    };
+
+    return this.add.text(
+      this.center,
+      this.calculateHeaderYBasedOnSquare(),
+      "Welcome to the MMORPG",
+      headerStyle
+    ).setOrigin(0.5, 0);
+  }
+
+  private calculateHeaderYBasedOnSquare(): number {
+    const squareTop = -(this.menu.height / 2);
+    return squareTop + this.menuMargin;
   }
 }
