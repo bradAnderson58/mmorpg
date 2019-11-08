@@ -1,6 +1,7 @@
 import * as Phaser from "phaser";
+import './styles/style.css';
 import * as img from "./assets/menu_background.jpg";
-//import * as font from "./fonts/Pixel-Noir.ttf";
+import * as font from "./assets/ancient_modern.png";
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -19,7 +20,7 @@ export class GameScene extends Phaser.Scene {
   private midY: number;
   private center: number = 0;
   private fontSize: number = 32;
-  private menuMargin: number = 10;
+  private menuMargin: number = 25;
 
   constructor() {
     super(sceneConfig);
@@ -33,6 +34,7 @@ export class GameScene extends Phaser.Scene {
   public preload(): void {
     this.loading = this.add.text(20, 20, "Loading Game...");
     this.load.image('background', img);
+    this.load.bitmapFont('myfont', font);
   }
 
   public create() {
@@ -68,14 +70,15 @@ export class GameScene extends Phaser.Scene {
 
   private createMenuHeader(): Phaser.GameObjects.Text {
     const headerStyle = {
-      font: 'game-font',
+      fontFamily: 'myfont',
       fill: "#6c855d",
+      fontSize: '52px'
     };
 
     return this.add.text(
       this.center,
       this.calculateHeaderYBasedOnSquare(),
-      "Welcome to the MMORPG",
+      "Generic MMO",
       headerStyle
     ).setOrigin(0.5, 0);
   }
