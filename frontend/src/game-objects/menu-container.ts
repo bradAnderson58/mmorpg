@@ -19,11 +19,6 @@ export class MenuContainer extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  public destroy(): void {
-    this.removeAll(true);
-    super.destroy();
-  }
-
   private createMenuBox(): Phaser.GameObjects.Rectangle {
     this.menuBox = this.scene.add.rectangle(
       this.center, this.center,

@@ -66,8 +66,8 @@ export class TextButton extends Phaser.GameObjects.Text {
   }
 
   private buttonClicked(): TextButton {
-    this.clickCallback();
     this.enterButtonHoverState();
+    this.clickCallback();
     return this;
   }
 }

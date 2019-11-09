@@ -8,6 +8,7 @@ import {MenuContainer} from "./game-objects/menu-container";
 import {InputField} from "./game-objects/input-field";
 import {MenuInputContainer} from "./game-objects/menu-input-container";
 import {AccountService} from "./services/account.service";
+import {MessageService} from "./services/message.service";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -51,21 +52,32 @@ export class GameScene extends Phaser.Scene {
     const cursorKeys = this.input.keyboard.createCursorKeys();
   }
 
-  private loginAction(): void {
+  private loginMenuAction(): void {
     console.log("log in plz");
   }
 
-  private accountAction(): void {
-    this.menuContainer.removeAll();
+  private accountMenuAction(): void {
     this.menuContainer.destroy();
+    this.menuContainer = null;
     this.menuContainer = this.accountCreationContainer();
   }
 
-  private createAction(): void {
+  private returnToMainAction(): void {
+    this.menuContainer.destroy();
+    this.menuContainer = this.mainMenuContainer();
+  }
+
+  private createAccountAction(): void {
     console.log('submit action');
     const username = _.head(document.getElementsByClassName('username-input')).value;
     const password = _.head(document.getElementsByClassName('password-input')).value;
-    AccountService.create(username, password);
+    AccountService.create(username, password)
+      .then(data => {
+        MessageService.showSuccessMessage("Successfully Registered! Sign in with new account");
+        this.returnToMainAction();
+      }).catch(error => {
+        MessageService.showFailureMessage(`Something went wrong: ${error.message}`);
+      });
   }
 
   private mainMenuContainer(): Phaser.GameObjects.Container {
@@ -74,8 +86,8 @@ export class GameScene extends Phaser.Scene {
       this.midX,
       this.midY,
       'Generic MMO',
-      new TextButton(this, 0, -50, 'Log In', () => this.loginAction()),
-      new TextButton(this, 0, 50, 'Create Account', () => this.accountAction())
+      new TextButton(this, 0, -50, 'Log In', () => this.loginMenuAction()),
+      new TextButton(this, 0, 50, 'Create Account', () => this.accountMenuAction())
     );
   }
 
@@ -88,11 +100,12 @@ export class GameScene extends Phaser.Scene {
       this.midX,
       this.midY,
       'Create New Account',
-      new TextButton(this, 0, 100, 'Create', () => this.createAction()),
+      new TextButton(this, 0, 75, 'Create', () => this.createAccountAction()),
       nameLabel,
       new InputField(this, 0, -70, 'username-input'),
       passLabel,
       new InputField(this, 0, 20, 'password-input'),
+      new TextButton(this, 0, 150, 'Back', () => this.returnToMainAction())
     );
   }
 }
