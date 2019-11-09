@@ -7,6 +7,7 @@ import {TextButton} from "./game-objects/text-button";
 import {MenuContainer} from "./game-objects/menu-container";
 import {InputField} from "./game-objects/input-field";
 import {MenuInputContainer} from "./game-objects/menu-input-container";
+import {AccountService} from "./services/account.service";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -62,6 +63,9 @@ export class GameScene extends Phaser.Scene {
 
   private createAction(): void {
     console.log('submit action');
+    const username = _.head(document.getElementsByClassName('username-input')).value;
+    const password = _.head(document.getElementsByClassName('password-input')).value;
+    AccountService.create(username, password);
   }
 
   private mainMenuContainer(): Phaser.GameObjects.Container {

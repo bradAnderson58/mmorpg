@@ -46,6 +46,24 @@ class LoginView(CreateAPIView):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
+class SignupView(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        name_exists = User.objects.filter(username=request.data['username']).exists()
+        if name_exists:
+            response = Response(status=status.HTTP_409_CONFLICT, data='Username already exists')
+        else:
+            user = User.objects.create(
+                username=request.data['username'],
+                password=request.data['password']
+            )
+            response = Response(UserSerializer(user).data)
+
+        return response
+
+
 class CharacterView(APIView):
     permission_classes = (IsAuthenticated,)
 

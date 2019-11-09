@@ -4,10 +4,10 @@ from rest_framework.serializers import HyperlinkedModelSerializer, Serializer, C
 from mmorpg.backend.models import Character
 
 
-class UserSerializer(HyperlinkedModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'id']
+        fields = ['username', 'email', 'groups', 'id']
 
 
 class GroupSerializer(HyperlinkedModelSerializer):
