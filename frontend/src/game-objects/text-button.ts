@@ -2,15 +2,16 @@
 import * as Phaser from 'phaser';
 
 export class TextButton extends Phaser.GameObjects.Text {
-  private readonly callback: () => void;
+  private readonly clickCallback: () => void;
+
+  private disableCallback: () => boolean;
 
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
     text: string | string[],
-    callback: () => void,
-    style?: Phaser.Types.GameObjects.Text.TextStyle,
+    clickCallback: () => void
   ) {
     const buttonStyle = {
       color: '#9fb364',
@@ -24,32 +25,49 @@ export class TextButton extends Phaser.GameObjects.Text {
 
     super(scene, x, y, text, buttonStyle);
 
-    this.callback = callback;
+    this.clickCallback = clickCallback;
 
-    this.setInteractive({ useHandCursor: true })
-      .setOrigin(0.5, 0)
+    this.setOrigin(0.5, 0).enableButton()
       .on('pointerover', () => this.enterButtonHoverState())
       .on('pointerout', () => this.enterButtonRestState())
       .on('pointerdown', () => this.enterButtonRestState())
       .on('pointerup', () => this.buttonClicked());
   }
 
-  private enterButtonHoverState() {
+  public disableButton(): TextButton {
+    this.disableInteractive()
+      .setStyle({
+        color: '#A0A0A0',
+        backgroundColor: '#D3D3D3'
+      });
+    return this;
+  }
+
+  public enableButton(): TextButton {
+    this.setInteractive({ useHandCursor: true })
+      .enterButtonRestState();
+    return this;
+  }
+
+  private enterButtonHoverState(): TextButton {
     this.setStyle({
       color: '#e5db48',
       backgroundColor: '#b25c34'
     });
+    return this;
   }
 
-  private enterButtonRestState() {
+  private enterButtonRestState(): TextButton {
     this.setStyle({
       color:'#9fb364',
       backgroundColor: '#8b2747'
     });
+    return this;
   }
 
-  private buttonClicked() {
-    this.callback();
+  private buttonClicked(): TextButton {
+    this.clickCallback();
     this.enterButtonHoverState();
+    return this;
   }
 }

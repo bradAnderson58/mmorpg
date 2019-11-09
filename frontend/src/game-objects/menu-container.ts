@@ -1,6 +1,4 @@
-
 import * as Phaser from 'phaser';
-import {TextButton} from "./text-button";
 
 export class MenuContainer extends Phaser.GameObjects.Container {
   private menuBox: Phaser.GameObjects.Rectangle;
@@ -8,25 +6,22 @@ export class MenuContainer extends Phaser.GameObjects.Container {
   private readonly center: number = 0;
   private readonly menuMargin: number = 25;
 
-  constructor(scene: Phaser.Scene, x?: number, y?: number, title?: string) {
+  constructor(scene: Phaser.Scene, x: number, y: number, title: string, ...uiElements: Phaser.GameObjects.GameObject[]) {
 
     super(scene, x, y);
 
     this.add([
       this.createMenuBox(),
       this.createMenuHeader(title),
-      new TextButton(scene, 0, -50, 'Log In', this.loginAction),
-      new TextButton(scene, 0, 50, 'Create Account', this.accountAction)
-    ])
+      ...uiElements
+    ]);
+
+    scene.add.existing(this);
   }
 
-  private loginAction(): void {
-    console.log("log in plz");
-  }
-
-
-  private accountAction(): void {
-    console.log('create an account!');
+  public destroy(): void {
+    this.removeAll(true);
+    super.destroy();
   }
 
   private createMenuBox(): Phaser.GameObjects.Rectangle {
@@ -52,7 +47,7 @@ export class MenuContainer extends Phaser.GameObjects.Container {
     return this.scene.add.text(
       this.center,
       this.calculateHeaderYBasedOnSquare(),
-      "Generic MMO",
+      title,
       headerStyle
     ).setOrigin(0.5, 0);
   }
