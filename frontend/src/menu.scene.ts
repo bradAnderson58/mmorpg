@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 import './styles/style.css';
 import * as img from "./assets/menu_background.jpg";
 import * as font from "./assets/ancient_modern.png";
+import {TextButton} from "./game-objects/text-button";
 
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -12,14 +13,15 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export class GameScene extends Phaser.Scene {
   private menuContainer: Phaser.GameObjects.Container;
-  private menu: Phaser.GameObjects.Rectangle & {body: Phaser.Physics.Arcade.Body};
+  private menu: Phaser.GameObjects.Rectangle;
   private loading: Phaser.GameObjects.Text;
   private background: Phaser.GameObjects.Image;
   private header: Phaser.GameObjects.Text;
+  private loginButton: Phaser.GameObjects.Text;
+  private createAccountButton: Phaser.GameObjects.Text;
   private midX: number;
   private midY: number;
   private center: number = 0;
-  private fontSize: number = 32;
   private menuMargin: number = 25;
 
   constructor() {
@@ -46,8 +48,10 @@ export class GameScene extends Phaser.Scene {
 
     this.menu = this.createMenuBox();
     this.header = this.createMenuHeader();
+    this.loginButton = new TextButton(this, 0, -50, 'Log In', this.loginAction);
+    this.createAccountButton = new TextButton(this, 0, 50, 'Create Account', this.accountAction);
 
-    this.menuContainer.add([this.menu, this.header]);
+    this.menuContainer.add([this.menu, this.header, this.loginButton, this.createAccountButton]);
 
     this.loading.destroy();
   }
@@ -57,22 +61,28 @@ export class GameScene extends Phaser.Scene {
 
   }
 
-  private createMenuBox(): any {
-    const menu = this.add.rectangle(
+  private loginAction(): void {
+    console.log("log in plz");
+  }
+
+  private accountAction(): void {
+    console.log('create an account!');
+  }
+
+  private createMenuBox(): Phaser.GameObjects.Rectangle {
+    return this.add.rectangle(
       this.center, this.center,
       500,
       500,
       0x311047
     ) as any;
-    this.physics.add.existing(menu);
-    return menu;
   }
 
   private createMenuHeader(): Phaser.GameObjects.Text {
     const headerStyle = {
       fontFamily: 'myfont',
       fill: "#6c855d",
-      fontSize: '52px'
+      fontSize: '64px'
     };
 
     return this.add.text(
