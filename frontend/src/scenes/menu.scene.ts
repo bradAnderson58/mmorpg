@@ -2,10 +2,11 @@ import * as Phaser from "phaser";
 import * as background from "../assets/keep_background.jpg";
 import * as sample from "../assets/sample_knights_2x.png";
 import * as font from "../assets/ancient_modern.png";
-import {MenuContainer} from "../game-objects/menu-container";
-import {TextButton} from "../game-objects/text-button";
+import {MenuContainer} from "../ui-objects/menu-container";
+import {TextButton} from "../ui-objects/text-button";
 import {StorageService} from "../services/storage.service";
-import {MenuInputContainer} from "../game-objects/menu-input-container";
+import {MenuInputContainer} from "../ui-objects/menu-input-container";
+import {CharacterCreation} from "../ui-objects/character.creation";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -75,29 +76,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createCharacterCreation(): Phaser.GameObjects.Container {
-    const classLabel = new Phaser.GameObjects.Text(this, -130, -110, 'Class:', {fontFamily: 'gamefont', color: '#9fb364'});
-    const menu = new MenuInputContainer(
-      this,
-      this.midX - (this.midX * .34),
-      this.midY,
-      'Create Character',
-      new TextButton(this, 0, 75, 'Create', () => console.log("submitted")),
-      () => true,
-      classLabel,
-
-    );
-    const back = this.add.rectangle(this.midX + (this.midX * .35), this.midY, 500, 500, 0x000000);
-    this.add.existing(back);
-    const sprite = this.add.sprite(this.midX + (this.midX * .35), this.midY,  'sample').setDisplaySize(200*this.WIDTH_RATIO, 200);
-    this.anims.create({
-      key: 'walk',
-      frames: this.anims.generateFrameNumbers('sample', {start: 3, end: 5}),
-      frameRate: 6,
-      repeat: -1
-    });
-
-    sprite.anims.load('walk');
-    sprite.anims.play('walk');
+    const menu = new CharacterCreation(this, this.midX, this.midY);
     return menu;
   }
 }

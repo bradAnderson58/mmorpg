@@ -4,8 +4,6 @@ import * as Phaser from 'phaser';
 export class TextButton extends Phaser.GameObjects.Text {
   private readonly clickCallback: () => void;
 
-  private disableCallback: () => boolean;
-
   constructor(
     scene: Phaser.Scene,
     x: number,
