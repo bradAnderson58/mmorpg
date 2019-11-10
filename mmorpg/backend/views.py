@@ -5,14 +5,10 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_jwt.settings import api_settings
 from rest_framework.viewsets import ModelViewSet
 
 from mmorpg.backend.models import Character
 from mmorpg.backend.serializers import UserSerializer, GroupSerializer, TokenSerializer, CharacterSerializer
-
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 class UserViewSet(ModelViewSet):
@@ -36,12 +32,7 @@ class LoginView(CreateAPIView):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            serializer = TokenSerializer(data={
-                "token": jwt_encode_handler(
-                    jwt_payload_handler(user)
-                )
-            })
-            serializer.is_valid()
+            serializer = TokenSerializer(user)
             return Response(serializer.data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 

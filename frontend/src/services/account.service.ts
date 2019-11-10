@@ -15,4 +15,15 @@ export class AccountService {
       }
     });
   }
+
+  public static login(username: string, password: string): AxiosPromise {
+    return axios({
+      method: 'post',
+      url: `${this.BASE_URL}auth/login/`,
+      data: {
+        username: username,
+        password: password
+      }
+    });
+  }
 }

@@ -1,22 +1,23 @@
 import * as Phaser from "phaser";
 import * as _ from 'lodash';
-import './styles/style.css';
-import * as img from "./assets/menu_background.jpg";
-import * as font from "./assets/ancient_modern.png";
-import {TextButton} from "./game-objects/text-button";
-import {MenuContainer} from "./game-objects/menu-container";
-import {InputField} from "./game-objects/input-field";
-import {MenuInputContainer} from "./game-objects/menu-input-container";
-import {AccountService} from "./services/account.service";
-import {MessageService} from "./services/message.service";
+import '../styles/style.css';
+import * as img from "../assets/menu_background.jpg";
+import * as font from "../assets/ancient_modern.png";
+import {TextButton} from "../game-objects/text-button";
+import {MenuContainer} from "../game-objects/menu-container";
+import {InputField} from "../game-objects/input-field";
+import {MenuInputContainer} from "../game-objects/menu-input-container";
+import {AccountService} from "../services/account.service";
+import {MessageService} from "../services/message.service";
+import {StorageService} from "../services/storage.service";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
   visible: false,
-  key: 'MenuScreen',
+  key: 'LoginScene',
 };
 
-export class GameScene extends Phaser.Scene {
+export class LoginScene extends Phaser.Scene {
   private menuContainer: Phaser.GameObjects.Container;
   private loading: Phaser.GameObjects.Text;
   private background: Phaser.GameObjects.Image;
@@ -34,12 +35,12 @@ export class GameScene extends Phaser.Scene {
 
   public preload(): void {
     this.loading = this.add.text(20, 20, "Loading Game...");
-    this.load.image('background', img);
+    this.load.image('login-background', img);
     this.load.bitmapFont('myfont', font);
   }
 
   public create() {
-    this.background = this.add.image(0, 0, 'background')
+    this.background = this.add.image(0, 0, 'login-background')
       .setOrigin(0, 0)
       .setDisplaySize(window.innerWidth, window.innerHeight);
 
@@ -53,13 +54,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private loginMenuAction(): void {
-    console.log("log in plz");
+    this.menuContainer.destroy();
+    this.menuContainer = this.createSubmissionForm('Log In', () => this.loginAction());
   }
 
   private accountMenuAction(): void {
     this.menuContainer.destroy();
-    this.menuContainer = null;
-    this.menuContainer = this.accountCreationContainer();
+    this.menuContainer = this.createSubmissionForm('Create', () => this.createAccountAction());
   }
 
   private returnToMainAction(): void {
@@ -68,9 +69,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createAccountAction(): void {
-    console.log('submit action');
     const username = _.head(document.getElementsByClassName('username-input')).value;
     const password = _.head(document.getElementsByClassName('password-input')).value;
+
     AccountService.create(username, password)
       .then(data => {
         MessageService.showSuccessMessage("Successfully Registered! Sign in with new account");
@@ -78,6 +79,27 @@ export class GameScene extends Phaser.Scene {
       }).catch(error => {
         MessageService.showFailureMessage(`Something went wrong: ${error.message}`);
       });
+  }
+
+  private loginAction(): void {
+    const username = _.head(document.getElementsByClassName('username-input')).value;
+    const password = _.head(document.getElementsByClassName('password-input')).value;
+
+    AccountService.login(username, password)
+      .then(response => {
+        StorageService.storeUserAndToken(response.data);
+        MessageService.showSuccessMessage("Login Success");
+        this.scene.start('MenuScene');
+      }).catch(error => {
+        MessageService.showFailureMessage(`Something went wrong: ${error.message}`);
+    })
+  }
+
+  private disableAccountSubmit(): boolean {
+    const username = _.head(document.getElementsByClassName('username-input')).value;
+    const password = _.head(document.getElementsByClassName('password-input')).value;
+
+    return (!username || !password);
   }
 
   private mainMenuContainer(): Phaser.GameObjects.Container {
@@ -91,7 +113,7 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  private accountCreationContainer(): Phaser.GameObjects.Container {
+  private createSubmissionForm(submitLabel: string, submitCallback: () => void): Phaser.GameObjects.Container {
     const nameLabel = new Phaser.GameObjects.Text(this, -130, -110, 'Username:', {fontFamily: 'myfont', color: '#9fb364'});
     const passLabel = new Phaser.GameObjects.Text(this, -130, -20, 'Password:', {fontFamily: 'myfont', color: '#9fb364'});
 
@@ -99,8 +121,9 @@ export class GameScene extends Phaser.Scene {
       this,
       this.midX,
       this.midY,
-      'Create New Account',
-      new TextButton(this, 0, 75, 'Create', () => this.createAccountAction()),
+      `Account ${submitLabel}`,
+      new TextButton(this, 0, 75, submitLabel, submitCallback),
+      this.disableAccountSubmit,
       nameLabel,
       new InputField(this, 0, -70, 'username-input'),
       passLabel,

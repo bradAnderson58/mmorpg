@@ -6,6 +6,7 @@ import {TextButton} from "./text-button";
 
 export class MenuInputContainer extends MenuContainer {
   private readonly submitButton: TextButton;
+  private readonly disableSubmit: () => boolean;
 
   constructor(
     scene: Phaser.Scene,
@@ -13,12 +14,14 @@ export class MenuInputContainer extends MenuContainer {
     y: number,
     title: string,
     submitButton: TextButton,
+    disableSubmit: () => boolean,
     ...uiElements: Phaser.GameObjects.GameObject[]
   ) {
 
     super(scene, x, y, title, submitButton, ...uiElements);
 
     this.submitButton = submitButton;
+    this.disableSubmit = disableSubmit;
 
     _(uiElements)
       .filter(element => element.type === 'DOMElement')
@@ -28,10 +31,7 @@ export class MenuInputContainer extends MenuContainer {
   }
 
   private checkValidForms(): void {
-    const username = _.head(document.getElementsByClassName('username-input')).value;
-    const password = _.head(document.getElementsByClassName('password-input')).value;
-
-    if (!username || !password) {
+    if (this.disableSubmit()) {
       this.submitButton.disableButton();
     } else {
       this.submitButton.enableButton();

@@ -1,7 +1,11 @@
 from django.contrib.auth.models import User, Group
 from rest_framework.serializers import HyperlinkedModelSerializer, Serializer, CharField, ModelSerializer
+from rest_framework_jwt.settings import api_settings
 
 from mmorpg.backend.models import Character
+
+jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 
 class UserSerializer(ModelSerializer):
@@ -16,8 +20,17 @@ class GroupSerializer(HyperlinkedModelSerializer):
         fields = ['url', 'name']
 
 
-class TokenSerializer(Serializer):
-    token = CharField(max_length=255)
+class TokenSerializer(ModelSerializer):
+    class Meta:
+        model = User
+
+    def to_representation(self, instance):
+        token = jwt_encode_handler(jwt_payload_handler(instance))
+        return {
+            'token': token,
+            'userId': instance.id,
+            'userName': instance.username
+        }
 
 
 class CharacterSerializer(ModelSerializer):
