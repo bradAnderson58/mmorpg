@@ -1,42 +1,43 @@
 
 import * as Phaser from 'phaser';
+import * as _ from 'lodash';
+import {SpriteDefinition} from "../intefaces/sprites";
 
-interface SpriteDefinition {
-  spriteSheet: string;
-  animation: string;
-}
 
 export class CharacterDisplay {
   public static readonly WIDTH_RATIO: number = 0.72;
 
-  private static ANIMATION = {};
+  // TODO: this will get populated by a rest call and not just handjammed?
+  private static readonly SPRITES: SpriteDefinition[] = [
+    {charClass: 'fighter', race: 'human', spriteSheet: 'chara5', animation: {start: 9, end: 11}},
+    {charClass: 'rogue', race: 'human', spriteSheet: 'chara2', animation: {start: 48, end: 50}},
+    {charClass: 'wizard', race: 'human', spriteSheet: 'chara2', animation: {start: 6, end: 8}},
+    {charClass: 'cleric', race: 'human', spriteSheet: 'sample_knights_2x', animation: {start: 3, end: 5}},
+    {charClass: 'fighter', race: 'elf', spriteSheet: 'chara2', animation: {start: 0, end: 2}},
+    {charClass: 'rogue', race: 'elf', spriteSheet: 'chara5', animation: {start: 48, end: 50}},
+    {charClass: 'wizard', race: 'elf', spriteSheet: 'chara3', animation: {start: 9, end: 11}},
+    {charClass: 'cleric', race: 'elf', spriteSheet: 'chara5', animation: {start: 51, end: 53}},
+    {charClass: 'fighter', race: 'dwarf', spriteSheet: 'chara5', animation: {start: 0, end: 2}},
+    {charClass: 'rogue', race: 'dwarf', spriteSheet: 'chara2', animation: {start: 54, end: 56}},
+    {charClass: 'wizard', race: 'dwarf', spriteSheet: 'chara2', animation: {start: 9, end: 11}},
+    {charClass: 'cleric', race: 'dwarf', spriteSheet: 'chara5', animation: {start: 3, end: 5}},
+  ];
 
-  private static readonly FRAMES = {
-    1: {start: 0, end: 2},
-    3: {start: 3, end: 5},
-    2: {start: 6, end: 8},
-    0: {start: 9, end: 11}
-  };
+  public static getCharacter(scene: Phaser.Scene, race: string, charClass: string): SpriteDefinition {
 
-  public static getCharacter(scene: Phaser.Scene, spriteIndex: number): SpriteDefinition {
-    if (!this.ANIMATION[spriteIndex]) {
-      this.ANIMATION[spriteIndex] = this.createSpriteAnimation(scene, spriteIndex);
-    }
-
-    return {
-      spriteSheet: 'sample',
-      animation: this.ANIMATION[spriteIndex],
-    };
+    return _(this.SPRITES)
+      .filter(sprite => sprite.race === race)
+      .filter(sprite => sprite.charClass === charClass)
+      .first();
   }
 
-  private static createSpriteAnimation(scene: Phaser.Scene, frameIndex: number): string {
-    scene.anims.create({
-      key: `walk${frameIndex}`,
-      frames: scene.anims.generateFrameNumbers('sample', this.FRAMES[frameIndex]),
-      frameRate: 6,
-      repeat: -1
-    });
-
-    return `walk${frameIndex}`;
+  public static getOptionsByLabel(label: string) {
+    if (label === 'charClass') {
+      return ['Wizard', 'Fighter', 'Rogue', 'Cleric'];
+    }
+    if (label === 'race') {
+      return['Human', 'Elf', 'Dwarf'];
+    }
+    return ['no options'];
   }
 }

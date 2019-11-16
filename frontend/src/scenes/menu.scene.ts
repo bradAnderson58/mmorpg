@@ -1,11 +1,13 @@
 import * as Phaser from "phaser";
 import * as background from "../assets/keep_background.jpg";
 import * as sample from "../assets/sample_knights_2x.png";
+import * as char5 from "../assets/chara5.png";
+import * as char2 from "../assets/chara2.png";
+import * as char3 from "../assets/chara3.png";
 import * as font from "../assets/ancient_modern.png";
 import {MenuContainer} from "../ui-objects/menu-container";
 import {TextButton} from "../ui-objects/text-button";
 import {StorageService} from "../services/storage.service";
-import {MenuInputContainer} from "../ui-objects/menu-input-container";
 import {CharacterCreation} from "../ui-objects/character.creation";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -15,7 +17,6 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export class MenuScene extends Phaser.Scene {
-  private WIDTH_RATIO: number = 0.72;
   private menuContainer: Phaser.GameObjects.Container;
   private loading: Phaser.GameObjects.Text;
   private background: Phaser.GameObjects.Image;
@@ -35,7 +36,10 @@ export class MenuScene extends Phaser.Scene {
     this.loading = this.add.text(20, 20, 'Loading Game...');
     this.load.image('menu-background', background);
     this.load.bitmapFont('gamefont', font);
-    this.load.spritesheet('sample', sample, {frameWidth: 52, frameHeight: 72})
+    this.load.spritesheet('sample_knights_2x', sample, {frameWidth: 52, frameHeight: 72});
+    this.load.spritesheet('chara5', char5, {frameWidth: 78, frameHeight: 108});
+    this.load.spritesheet('chara2', char2, {frameWidth: 78, frameHeight: 108});
+    this.load.spritesheet('chara3', char3, {frameWidth: 78, frameHeight: 108});
   }
 
   public create() {
