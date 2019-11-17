@@ -10,6 +10,9 @@ import {TextButton} from "../ui-objects/text-button";
 import {StorageService} from "../services/storage.service";
 import {CharacterCreation} from "../ui-objects/character.creation";
 import {CharacterLoad} from "../ui-objects/character.load";
+import {CharacterService} from "../services/character.service";
+import {MessageService} from "../services/message.service";
+import {Character} from "../intefaces/character.interface";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -19,6 +22,8 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export class MenuScene extends Phaser.Scene {
   private menuContainer: Phaser.GameObjects.Container;
+  private loadButton: TextButton;
+  private characters: Character[];
   private loading: Phaser.GameObjects.Text;
   private background: Phaser.GameObjects.Image;
   private midX: number;
@@ -56,6 +61,13 @@ export class MenuScene extends Phaser.Scene {
 
     this.menuContainer = this.createMenuContainer();
 
+    CharacterService.getAll().then(response => {
+      this.characters = response.data;
+      if (this.characters.length !== 0) {
+        this.loadButton.enableButton();
+      }
+    }).catch(error => MessageService.showFailureMessage(`Something went wrong: ${error.message}`));
+
     this.loading.destroy();
   }
 
@@ -70,13 +82,15 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createMenuContainer(): Phaser.GameObjects.Container {
+    this.loadButton = new TextButton(this, 0, 50, 'Load Character', () => this.openCharacterPicker());
+    this.loadButton.disableButton();
     return new MenuContainer(
       this,
       this.midX,
       this.midY,
       'Generic MMO',
       new TextButton(this, 0, -50, 'Create Character', () => this.openCharacterCreation()),
-      new TextButton(this, 0, 50, 'Load Character', () => this.openCharacterPicker())
+      this.loadButton,
     );
   }
 
@@ -85,11 +99,14 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createLoadCharacter(): Phaser.GameObjects.Container {
-    return new CharacterLoad(this, this.midX, this.midY);
+    return new CharacterLoad(this, this.midX, this.midY, this.characters, () => this.backToMenu());
   }
 
   private backToMenu(): void {
     this.menuContainer.destroy();
     this.menuContainer = this.createMenuContainer();
+    if (this.characters.length !== 0) {
+      this.loadButton.enableButton();
+    }
   }
 }

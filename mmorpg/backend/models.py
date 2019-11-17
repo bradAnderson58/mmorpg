@@ -26,4 +26,5 @@ class Character(Model):
     race = CharField(max_length=6, choices=Race.choices())
     character_class = CharField(max_length=7, choices=CharacterClass.choices())
     level = IntegerField(default=1)
-    sprite = CharField(max_length=32)
+    sprite_sheet = CharField(max_length=32)
+    animations = CharField(max_length=256) # TODO: make this a json field when move to real db

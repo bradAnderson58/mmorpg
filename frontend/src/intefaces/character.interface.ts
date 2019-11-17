@@ -5,4 +5,6 @@ export interface Character {
   name: string;
   race: string;
   charClass: string;
+  spriteSheet?: string;
+  walkAnimation?: any;
 }

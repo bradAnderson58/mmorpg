@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User, Group
 from rest_framework import status
@@ -60,19 +62,12 @@ class CharacterView(APIView):
 
     def get(self, request, character_id=None):
         if character_id is not None:
-            has_permissions = (
-                Character.objects
-                .filter(user_id=request.user.id)
-                .filter(id=character_id)
-                .exists()
-            )
-            if not has_permissions:
+            if self.has_permissions(request.user, character_id):
+                character = Character.objects.get(id=character_id)
+                serializer = CharacterSerializer(character)
+                return Response(serializer.data)
+            else:
                 return Response(status.HTTP_401_UNAUTHORIZED)
-
-            character = Character.objects.get(id=character_id)
-            serializer = CharacterSerializer(character)
-            return Response(serializer.data)
-
         else:
             characters = Character.objects.filter(user_id=request.user.id)
             serializer = CharacterSerializer(characters, many=True)
@@ -83,6 +78,23 @@ class CharacterView(APIView):
             name=request.data.get('name'),
             race=request.data.get('race'),
             character_class=request.data.get('charClass'),
-            user=request.user
+            user=request.user,
+            sprite_sheet=request.data.get('spriteSheet'),
+            animations=json.dumps(request.data.get('walkAnimation'))
         )
         return Response(CharacterSerializer(character).data)
+
+    def delete(self, request, character_id=None):
+        if self.has_permissions(request.user, character_id):
+            Character.objects.get(id=character_id).delete()
+            return Response(status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status.HTTP_401_UNAUTHORIZED)
+
+    def has_permissions(self, user: User, character_id: int) -> bool:
+        return (
+            Character.objects
+            .filter(user_id=user.id)
+            .filter(id=character_id)
+            .exists()
+        )

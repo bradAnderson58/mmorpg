@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User, Group
 from rest_framework.serializers import HyperlinkedModelSerializer, Serializer, CharField, ModelSerializer
 from rest_framework_jwt.settings import api_settings
@@ -36,9 +38,11 @@ class TokenSerializer(ModelSerializer):
 class CharacterSerializer(ModelSerializer):
     class Meta:
         model = Character
-        fields = ('id', 'name', 'race', 'level', 'sprite')
+        fields = ('id', 'name', 'race', 'level')
 
     def to_representation(self, instance):
         ret = super(CharacterSerializer, self).to_representation(instance)
-        ret['characterClass'] = instance.character_class
+        ret['charClass'] = instance.character_class
+        ret['spriteSheet'] = instance.sprite_sheet
+        ret['walkAnimation'] = json.loads(instance.animations)
         return ret
