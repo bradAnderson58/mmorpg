@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {CharacterDisplay} from "../services/character.display";
+import {CharacterService} from "../services/character.service";
 
 export class DropdownField extends Phaser.GameObjects.DOMElement {
   private readonly htmlElement;
@@ -28,7 +28,7 @@ export class DropdownField extends Phaser.GameObjects.DOMElement {
   }
 
   private setOptions(): void {
-    const options = CharacterDisplay.getOptionsByLabel(this.label);
+    const options = CharacterService.getOptionsByLabel(this.label);
     let val = 0;
 
     options.forEach(option => {

@@ -3,9 +3,11 @@ import * as _ from 'lodash';
 import {MenuInputContainer} from "./menu-input-container";
 import {TextButton} from "./text-button";
 import {DropdownField} from "./dropdown-field";
-import {CharacterDisplay} from "../services/character.display";
+import {CharacterService} from "../services/character.service";
 import {SpriteDefinition} from "../intefaces/sprites";
 import {InputField} from "./input-field";
+import {StorageService} from "../services/storage.service";
+import {MessageService} from "../services/message.service";
 
 
 export class CharacterCreation extends Phaser.GameObjects.Container {
@@ -13,7 +15,7 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
   private ANIMATIONS;
   private viewState;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, ret: () => void) {
     const farx = x + (x * 0.35);
     super(scene, farx, y);
     this.ANIMATIONS = {};
@@ -30,7 +32,7 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
       x - (x * 0.34),
       y,
       'Create Character',
-      new TextButton(scene, 0, 75, 'Create', () => console.log('submitted')),
+      new TextButton(scene, 0, 75, 'Create', () => this.sendCharacterCreate()),
       () => this.disableCharacterCreate(),
       nameLabel,
       new InputField(scene, 0, -100, 'name-input'),
@@ -38,6 +40,7 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
       new DropdownField(scene, -150, -30, 'charClass', (label: string, value: string) => this.switchSprite(label, value)),
       raceLabel,
       new DropdownField(scene, 60, -30, 'race', (label: string, value: string) => this.switchSprite(label, value)),
+      new TextButton(scene, 0, 150, 'Back', ret),
     );
 
     this.add([
@@ -48,15 +51,20 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
+  public destroy(): void {
+    this.menuInput.destroy();
+    super.destroy();
+  }
+
   private createBackdrop(): Phaser.GameObjects.Rectangle {
     return this.scene.add.rectangle(0, 0, 500, 500, 0x000000);
   }
 
   private createSprite(race: string, charClass: string): Phaser.GameObjects.Sprite {
-    const spriteDef = CharacterDisplay.getCharacter(this.scene, race, charClass);
+    const spriteDef = CharacterService.getCharacter(this.scene, race, charClass);
     console.log(spriteDef);
     const sprite = this.scene.add.sprite(0, 0, spriteDef.spriteSheet)
-      .setDisplaySize(200*CharacterDisplay.WIDTH_RATIO, 200);
+      .setDisplaySize(200*CharacterService.WIDTH_RATIO, 200);
 
     sprite.setName('demo-sprite');
 
@@ -92,5 +100,19 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
     const characterName = _.head(document.getElementsByClassName('name-input')).value;
 
     return !characterName;
+  }
+
+  private sendCharacterCreate(): void {
+    this.viewState.name = _.head(document.getElementsByClassName('name-input')).value;
+    const userId = StorageService.getUserId();
+
+    CharacterService.create(userId, this.viewState)
+      .then(response => {
+        console.log(response);
+        MessageService.showSuccessMessage(`Character ${response} created`);
+        this.scene.scene.start('MenuScene');
+      }).catch(error => {
+        MessageService.showFailureMessage(`Something went wrong: ${error.message}`);
+    });
   }
 }

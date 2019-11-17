@@ -82,7 +82,7 @@ class CharacterView(APIView):
         character = Character.objects.create(
             name=request.data.get('name'),
             race=request.data.get('race'),
-            character_class=request.data.get('characterClass'),
+            character_class=request.data.get('charClass'),
             user=request.user
         )
         return Response(CharacterSerializer(character).data)

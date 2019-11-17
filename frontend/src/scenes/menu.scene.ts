@@ -9,6 +9,7 @@ import {MenuContainer} from "../ui-objects/menu-container";
 import {TextButton} from "../ui-objects/text-button";
 import {StorageService} from "../services/storage.service";
 import {CharacterCreation} from "../ui-objects/character.creation";
+import {CharacterLoad} from "../ui-objects/character.load";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -59,13 +60,13 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private openCharacterCreation(): void {
-    console.log('open char creation');
     this.menuContainer.destroy();
     this.menuContainer = this.createCharacterCreation();
   }
 
   private openCharacterPicker(): void {
-    console.log('load a char');
+    this.menuContainer.destroy();
+    this.menuContainer = this.createLoadCharacter();
   }
 
   private createMenuContainer(): Phaser.GameObjects.Container {
@@ -80,7 +81,15 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private createCharacterCreation(): Phaser.GameObjects.Container {
-    const menu = new CharacterCreation(this, this.midX, this.midY);
-    return menu;
+    return new CharacterCreation(this, this.midX, this.midY, () => this.backToMenu());
+  }
+
+  private createLoadCharacter(): Phaser.GameObjects.Container {
+    return new CharacterLoad(this, this.midX, this.midY);
+  }
+
+  private backToMenu(): void {
+    this.menuContainer.destroy();
+    this.menuContainer = this.createMenuContainer();
   }
 }

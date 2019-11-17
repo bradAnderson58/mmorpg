@@ -23,7 +23,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   backgroundColor: '#000000',
 
   // TODO: note order is switched here for debugging purposes
-  scene: [MenuScene, LoginScene],
+  scene: [LoginScene, MenuScene],
 };
 
 export const game = new Phaser.Game(gameConfig);

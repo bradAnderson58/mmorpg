@@ -1,10 +1,13 @@
 
 import * as Phaser from 'phaser';
 import * as _ from 'lodash';
+import axios, {AxiosPromise} from 'axios';
 import {SpriteDefinition} from "../intefaces/sprites";
+import {Character} from "../intefaces/character.interface";
 
 
-export class CharacterDisplay {
+export class CharacterService {
+  private static readonly BASE_URL: string = "http://localhost:8000/";
   public static readonly WIDTH_RATIO: number = 0.72;
 
   // TODO: this will get populated by a rest call and not just handjammed?
@@ -30,6 +33,22 @@ export class CharacterDisplay {
       .filter(sprite => sprite.charClass === charClass)
       .first();
   }
+
+  public static create(userId: number, params: Character): AxiosPromise {
+    return axios({
+      method: 'post',
+      url: `${this.BASE_URL}api/characters/`,
+      data: params
+    });
+  }
+
+  public static getAll(): AxiosPromise {
+    return axios({
+      method: 'get',
+      url: `${this.BASE_URL}api/characters/`,
+    });
+  }
+
 
   public static getOptionsByLabel(label: string) {
     if (label === 'charClass') {

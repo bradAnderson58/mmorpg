@@ -34,6 +34,9 @@ export class LoginScene extends Phaser.Scene {
   }
 
   public preload(): void {
+    if (StorageService.isLoggedIn()) {
+      this.scene.start('MenuScene');
+    }
     this.loading = this.add.text(20, 20, "Loading Game...");
     this.load.image('login-background', img);
     this.load.bitmapFont('myfont', font);
