@@ -1,6 +1,4 @@
 import {Character} from "../intefaces/character.interface";
-import * as chara3 from "../assets/chara3.png";
-
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -22,26 +20,27 @@ export class GameScene extends Phaser.Scene {
 
   public preload(): void {
     this.loading = this.add.text(20, 20, 'Loading Game...');
-    import(`../assets/${this.character.spriteSheet}.png`)
-      .then(src => {
-        this.load.spritesheet('player', src, {frameWidth: 78, frameHeight: 108});
-      });
-
-    console.log(chara3);
-    this.load.spritesheet('test', chara3, {frameWidth: 78, frameHeight: 108});
-
-    this.loading.destroy();
   }
 
   public create() {
-    console.log('nothing');
-    this.createSprite('test');
-    this.createSprite('player', 400, 300);
+    this.load.on('complete', (event) => this.realCreate(event));
+
+    import(`../assets/${this.character.spriteSheet}.png`)
+      .then(src => {
+        this.load.spritesheet('player', src, {frameWidth: 78, frameHeight: 108});
+        this.load.start();
+
+        this.loading.destroy();
+      });
+  }
+
+  public realCreate(event) {
+    console.log(event);
+    this.createSprite('player');
   }
 
   public createSprite(name: string, x: number = 200, y: number = 200) {
     const sprite = this.add.sprite(x, y, name)
-      //.setDisplaySize(0, 0)
       .setName(`${name}-sprite`);
 
     this.anims.create({
