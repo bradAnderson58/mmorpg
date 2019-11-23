@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import {Character} from "../intefaces/character.interface";
+import {CleanContainer} from "./clean.container";
 
-export class CharacterDisplay extends Phaser.GameObjects.Container {
+export class CharacterDisplay extends CleanContainer {
   private character: Character;
   private sprite: Phaser.GameObjects.Sprite;
   public readonly WIDTH_RATIO: number = 0.72;
@@ -19,7 +20,7 @@ export class CharacterDisplay extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  public destroy(): void {
+  public cleanDestroy(): void {
     this.scene.anims.remove('display-anim');
     this.sprite.destroy();
     super.destroy();

@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
+import {CleanContainer} from "./clean.container";
 
-export class MenuContainer extends Phaser.GameObjects.Container {
+export class MenuContainer extends CleanContainer {
   private menuBox: Phaser.GameObjects.Rectangle;
 
   private readonly center: number = 0;
@@ -50,5 +51,9 @@ export class MenuContainer extends Phaser.GameObjects.Container {
   private calculateHeaderYBasedOnSquare(): number {
     const squareTop = -(this.menuBox.height / 2);
     return squareTop + this.menuMargin;
+  }
+
+  public cleanDestroy(): void {
+    this.destroy();
   }
 }

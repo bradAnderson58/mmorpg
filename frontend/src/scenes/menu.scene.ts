@@ -13,6 +13,7 @@ import {CharacterLoad} from "../ui-objects/character.load";
 import {CharacterService} from "../services/character.service";
 import {MessageService} from "../services/message.service";
 import {Character} from "../intefaces/character.interface";
+import {CleanContainer} from "../ui-objects/clean.container";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -21,7 +22,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export class MenuScene extends Phaser.Scene {
-  private menuContainer: Phaser.GameObjects.Container;
+  private menuContainer: CleanContainer;
   private loadButton: TextButton;
   private characters: Character[];
   private loading: Phaser.GameObjects.Text;
@@ -72,7 +73,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private openCharacterCreation(): void {
-    this.menuContainer.destroy();
+    this.menuContainer.cleanDestroy();
     this.menuContainer = this.createCharacterCreation();
   }
 
@@ -81,7 +82,7 @@ export class MenuScene extends Phaser.Scene {
     this.menuContainer = this.createLoadCharacter();
   }
 
-  private createMenuContainer(): Phaser.GameObjects.Container {
+  private createMenuContainer(): CleanContainer {
     this.loadButton = new TextButton(this, 0, 50, 'Load Character', () => this.openCharacterPicker());
     this.loadButton.disableButton();
     return new MenuContainer(
@@ -94,16 +95,16 @@ export class MenuScene extends Phaser.Scene {
     );
   }
 
-  private createCharacterCreation(): Phaser.GameObjects.Container {
+  private createCharacterCreation(): CleanContainer {
     return new CharacterCreation(this, this.midX, this.midY, () => this.backToMenu());
   }
 
-  private createLoadCharacter(): Phaser.GameObjects.Container {
+  private createLoadCharacter(): CleanContainer {
     return new CharacterLoad(this, this.midX, this.midY, this.characters, () => this.backToMenu());
   }
 
   private backToMenu(): void {
-    this.menuContainer.destroy();
+    this.menuContainer.cleanDestroy();
     this.menuContainer = this.createMenuContainer();
     if (this.characters.length !== 0) {
       this.loadButton.enableButton();

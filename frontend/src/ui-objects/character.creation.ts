@@ -8,9 +8,10 @@ import {InputField} from "./input-field";
 import {MessageService} from "../services/message.service";
 import {CharacterDisplay} from "./character.display";
 import {Character} from "../intefaces/character.interface";
+import {CleanContainer} from "./clean.container";
 
 
-export class CharacterCreation extends Phaser.GameObjects.Container {
+export class CharacterCreation extends CleanContainer {
   private menuInput: MenuInputContainer;
   private characterDisplay: CharacterDisplay;
   private returnFunction: () => void;
@@ -33,10 +34,10 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
     scene.add.existing(this);
   }
 
-  public destroy(): void {
+  public cleanDestroy(): void {
     this.menuInput.destroy();
     this.characterDisplay.destroy();
-    super.destroy();
+    this.destroy();
   }
 
   private createMenu(x: number, y: number): void {
@@ -89,9 +90,8 @@ export class CharacterCreation extends Phaser.GameObjects.Container {
 
     CharacterService.create(this.character)
       .then(response => {
-        console.log(response);
-        MessageService.showSuccessMessage(`Character ${response} created`);
-        this.returnFunction();
+        MessageService.showSuccessMessage(`Character ${response.data.name} created`);
+        this.scene.scene.start('GameScene', response.data);
       }).catch(error => MessageService.showFailureMessage(`Something went wrong: ${error.message}`));
   }
 }

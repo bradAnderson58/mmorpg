@@ -5,9 +5,11 @@ import {MenuInputContainer} from "./menu-input-container";
 import {TextButton} from "./text-button";
 import {CharacterDisplay} from "./character.display";
 import {DropdownField} from "./dropdown-field";
+import {CleanContainer} from "./clean.container";
 
-export class CharacterLoad extends Phaser.GameObjects.Container {
+export class CharacterLoad extends CleanContainer {
   private characters: Character[];
+  private selectedCharacter: Character;
   private menuInput: MenuInputContainer;
   private characterDisplay: CharacterDisplay;
 
@@ -15,20 +17,21 @@ export class CharacterLoad extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.characters = characters;
+    this.selectedCharacter = _.first(characters);
     this.createMenu(x, y, ret);
     this.characterDisplay = new CharacterDisplay(scene, x + (x * 0.35), y, _.first(this.characters));
   }
 
-  public destroy(): void {
+  public cleanDestroy(): void {
     this.menuInput.destroy();
     this.characterDisplay.destroy();
-    super.destroy();
+    this.destroy();
   }
 
   private createMenu(x: number, y: number, ret: () => void) {
-    const charactersLabel = new Phaser.GameObjects.Text(this.scene, 0, 100, 'Character:', {fontFamily: 'gamefont', color: '#9fb364'});
+    const charactersLabel = new Phaser.GameObjects.Text(this.scene, -100, -95, 'Character:', {fontFamily: 'gamefont', color: '#9fb364'});
 
-    const characterDropdown = new DropdownField(this.scene, 0, 0, 'loadChar')
+    const characterDropdown = new DropdownField(this.scene, -100, -75, 'loadChar')
       .setUpdateCallback((name: string) => this.selectCharacter(name))
       .setOptions(_.map(this.characters, character => character.name));
 
@@ -46,13 +49,13 @@ export class CharacterLoad extends Phaser.GameObjects.Container {
   }
 
   private sendCharacterLoad(): void {
-    console.log('load');
+    this.scene.scene.start('GameScene', {character: this.selectedCharacter});
   }
 
   private selectCharacter(name: string): void {
     console.log(`selecting ${name}`);
-    const character = _.find(this.characters, character => character.name === name);
-    this.characterDisplay.switchSprite(character);
+    this.selectedCharacter = _.find(this.characters, character => character.name === name);
+    this.characterDisplay.switchSprite(this.selectedCharacter);
   }
 
   private disableCharacterLoad(): boolean {
