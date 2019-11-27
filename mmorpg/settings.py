@@ -68,8 +68,12 @@ WSGI_APPLICATION = 'mmorpg.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mmo_db',
+        'USER': 'db_user',
+        'PASSWORD': os.environ.get('TF_VAR_mmo_db_password'),
+        'HOST': 'mmo-db.ci0kbpmmntjq.us-west-1.rds.amazonaws.com',
+        'PORT': 3306
     }
 }
 

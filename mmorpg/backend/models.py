@@ -1,3 +1,4 @@
+import django_mysql.models as mysql_models
 from django.contrib.auth.models import User
 from django.db.models import Model, CharField, ForeignKey, CASCADE, IntegerField
 
@@ -27,4 +28,4 @@ class Character(Model):
     character_class = CharField(max_length=7, choices=CharacterClass.choices())
     level = IntegerField(default=1)
     sprite_sheet = CharField(max_length=32)
-    animations = CharField(max_length=256) # TODO: make this a json field when move to real db
+    animations = mysql_models.JSONField()
