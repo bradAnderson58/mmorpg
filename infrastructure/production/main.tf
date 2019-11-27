@@ -32,3 +32,29 @@ resource "aws_s3_bucket" "website" {
 EOF
   }
 }
+
+resource "aws_db_subnet_group" "db-group" {
+  name       = "mmo-db-subnets"
+  subnet_ids = aws_subnet.mmo-subnets.*.id
+}
+
+resource "aws_db_instance" "mmo_db" {
+  identifier        = "mmo-db"
+  engine            = "mysql"
+  engine_version    = "8.0.16"
+  instance_class    = "db.t2.micro"
+  allocated_storage = 20
+  username          = "db_user"
+  password          = var.mmo_db_password
+
+  publicly_accessible = true
+  apply_immediately   = true
+  skip_final_snapshot = true
+
+  db_subnet_group_name   = aws_db_subnet_group.db-group.name
+  vpc_security_group_ids = [aws_security_group.mmo-db-sg.id]
+
+  tags = {
+    Name = "mmo-db"
+  }
+}
