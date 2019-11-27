@@ -38,8 +38,17 @@ resource "aws_iam_user" "brad" {
   name = "brad.mmo"
 }
 
+resource "aws_iam_user" "sego" {
+  name = "sego.mmo"
+}
+
 resource "aws_iam_user_login_profile" "brad_login" {
   user    = aws_iam_user.brad.name
+  pgp_key = "keybase:bradface"
+}
+
+resource "aws_iam_user_login_profile" "sego_login" {
+  user    = aws_iam_user.sego.name
   pgp_key = "keybase:bradface"
 }
 
@@ -48,7 +57,8 @@ resource "aws_iam_group_membership" "mmo-mfa" {
   group = module.mfa_group.mfa_group_name
 
   users = [
-    aws_iam_user.brad.name
+    aws_iam_user.brad.name,
+    aws_iam_user.sego.name
   ]
 }
 
@@ -57,10 +67,15 @@ resource "aws_iam_group_membership" "mmo-dev" {
   group = aws_iam_group.mmo-dev.name
 
   users = [
-    aws_iam_user.brad.name
+    aws_iam_user.brad.name,
+    aws_iam_user.sego.name
   ]
 }
 
 output "brad_password" {
   value = aws_iam_user_login_profile.brad_login.encrypted_password
+}
+
+output "sego_password" {
+  value = aws_iam_user_login_profile.sego_login.encrypted_password
 }
