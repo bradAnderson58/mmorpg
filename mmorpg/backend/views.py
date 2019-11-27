@@ -102,11 +102,8 @@ class CharacterView(APIView):
     def post(self, request):
         character = Character.objects.create(
             name=request.data.get('name'),
-            race=request.data.get('race'),
-            character_class=request.data.get('charClass'),
+            template_id=request.data.get('templateId'),
             user=request.user,
-            sprite_sheet=request.data.get('spriteSheet'),
-            animations=json.dumps(request.data.get('walkAnimation'))
         )
         return Response(CharacterSerializer(character).data)
 

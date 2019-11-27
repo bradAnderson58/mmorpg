@@ -19,7 +19,7 @@ export class CharacterLoad extends CleanContainer {
     this.characters = characters;
     this.selectedCharacter = _.first(characters);
     this.createMenu(x, y, ret);
-    this.characterDisplay = new CharacterDisplay(scene, x + (x * 0.35), y, _.first(this.characters));
+    this.characterDisplay = new CharacterDisplay(scene, x + (x * 0.35), y, _.first(this.characters).template);
   }
 
   public cleanDestroy(): void {
@@ -49,13 +49,13 @@ export class CharacterLoad extends CleanContainer {
   }
 
   private sendCharacterLoad(): void {
-    this.scene.scene.start('GameScene', {character: this.selectedCharacter});
+    this.scene.scene.start('GameScene', this.selectedCharacter);
   }
 
   private selectCharacter(name: string): void {
     console.log(`selecting ${name}`);
-    this.selectedCharacter = _.find(this.characters, character => character.name === name);
-    this.characterDisplay.switchSprite(this.selectedCharacter);
+    this.selectedCharacter = _.find(this.characters, character => character.name.toLowerCase() === name);
+    this.characterDisplay.switchSprite(this.selectedCharacter.template);
   }
 
   private disableCharacterLoad(): boolean {

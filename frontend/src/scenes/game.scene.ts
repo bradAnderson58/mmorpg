@@ -8,14 +8,14 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export class GameScene extends Phaser.Scene {
   private loading: Phaser.GameObjects.Text;
-  private character: Character;
+  private playerCharacter: Character;
 
   constructor() {
     super(sceneConfig);
   }
 
-  public init(initParams: any): void {
-    this.character = initParams.character;
+  public init(playerCharacter: Character): void {
+    this.playerCharacter = playerCharacter;
   }
 
   public preload(): void {
@@ -25,7 +25,7 @@ export class GameScene extends Phaser.Scene {
   public create() {
     this.load.on('complete', (event) => this.realCreate(event));
 
-    import(`../assets/${this.character.spriteSheet}.png`)
+    import(`../assets/${this.playerCharacter.template.spriteSheet}.png`)
       .then(src => {
         this.load.spritesheet('player', src, {frameWidth: 78, frameHeight: 108});
         this.load.start();
@@ -45,7 +45,7 @@ export class GameScene extends Phaser.Scene {
 
     this.anims.create({
       key: `${name}-anim`,
-      frames: this.anims.generateFrameNumbers(name, this.character.walkAnimation),
+      frames: this.anims.generateFrameNumbers(name, this.playerCharacter.template.animations.south),
       frameRate: 6,
       repeat: -1
     });

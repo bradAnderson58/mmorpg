@@ -48,7 +48,7 @@ class CharacterTemplateSerializer(ModelSerializer):
 
 
 class CharacterSerializer(ModelSerializer):
-    template = CharacterTemplateSerializer
+    template = CharacterTemplateSerializer(read_only=True)
     class Meta:
         model = Character
         fields = ('id', 'name', 'template', 'level')

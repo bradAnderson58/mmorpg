@@ -7,7 +7,7 @@ import {CharacterService} from "../services/character.service";
 import {InputField} from "./input-field";
 import {MessageService} from "../services/message.service";
 import {CharacterDisplay} from "./character.display";
-import {Character} from "../intefaces/character.interface";
+import {CharacterTemplate} from "../intefaces/character.interface";
 import {CleanContainer} from "./clean.container";
 
 
@@ -15,23 +15,21 @@ export class CharacterCreation extends CleanContainer {
   private menuInput: MenuInputContainer;
   private characterDisplay: CharacterDisplay;
   private returnFunction: () => void;
-  private character: Character;
+  private characterTemplates: CharacterTemplate[];
+  private selectedTemplate: CharacterTemplate;
 
   constructor(scene: Phaser.Scene, x: number, y: number, ret: () => void) {
     super(scene, x, y);
     this.returnFunction = ret;
-    this.character = {
-      name: '',
-      race: 'human',
-      charClass: 'fighter',
-      walkAnimation: {start: 9, end: 11},
-      spriteSheet: 'chara5',
-    };
+    CharacterService.getCharacterTemplates().then(response => {
+      this.characterTemplates = response.data;
 
-    this.createMenu(x, y);
-    this.characterDisplay = new CharacterDisplay(scene, x + (x * 0.35), y, this.character);
+      this.selectedTemplate = _.first(this.characterTemplates);
+      this.createMenu(x, y);
+      this.characterDisplay = new CharacterDisplay(scene, x + (x * 0.35), y, this.selectedTemplate);
 
-    scene.add.existing(this);
+      scene.add.existing(this);
+    });
   }
 
   public cleanDestroy(): void {
@@ -47,11 +45,11 @@ export class CharacterCreation extends CleanContainer {
 
     const classDropdown = new DropdownField(this.scene, -150, -30, 'charClass')
       .setUpdateCallback((value: string) => this.switchClassSprite(value))
-      .setOptions(CharacterService.getOptionsByLabel('charClass'));
+      .setOptions(this.getOptionsByField('characterClass'));
 
     const raceDropdown = new DropdownField(this.scene, 60, -30, 'race')
       .setUpdateCallback((value: string) => this.switchRaceSprite(value))
-      .setOptions(CharacterService.getOptionsByLabel('race'));
+      .setOptions(this.getOptionsByField('race'));
 
     this.menuInput = new MenuInputContainer(
       this.scene,
@@ -71,13 +69,13 @@ export class CharacterCreation extends CleanContainer {
   }
 
   private switchClassSprite(value: string): void {
-    this.character = CharacterService.findDefaultCharacter(this.character.race, value);
-    this.characterDisplay.switchSprite(this.character);
+    this.selectedTemplate = this.findDefaultCharacter(this.selectedTemplate.race, value);
+    this.characterDisplay.switchSprite(this.selectedTemplate);
   }
 
   private switchRaceSprite(value: string): void {
-    this.character = CharacterService.findDefaultCharacter(value, this.character.charClass);
-    this.characterDisplay.switchSprite(this.character);
+    this.selectedTemplate = this.findDefaultCharacter(value, this.selectedTemplate.characterClass);
+    this.characterDisplay.switchSprite(this.selectedTemplate);
   }
 
   private disableCharacterCreate(): boolean {
@@ -86,12 +84,25 @@ export class CharacterCreation extends CleanContainer {
   }
 
   private sendCharacterCreate(): void {
-    this.character.name = _.head(document.getElementsByClassName('name-input')).value;
+    const name = _.head(document.getElementsByClassName('name-input')).value;
 
-    CharacterService.create(this.character)
+    CharacterService.create(this.selectedTemplate.id, name)
       .then(response => {
         MessageService.showSuccessMessage(`Character ${response.data.name} created`);
         this.scene.scene.start('GameScene', response.data);
       }).catch(error => MessageService.showFailureMessage(`Something went wrong: ${error.message}`));
+  }
+
+  private getOptionsByField(field: string): string[] {
+    return _(this.characterTemplates)
+      .uniqBy(field)
+      .map(template => template[field].charAt(0).toLocaleUpperCase() + template[field].slice(1));
+  }
+
+  private findDefaultCharacter(race: string, characterClass: string): CharacterTemplate {
+    return _.find(
+      this.characterTemplates,
+      template => template.race === race && template.characterClass === characterClass
+    );
   }
 }
