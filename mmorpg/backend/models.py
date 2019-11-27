@@ -18,14 +18,23 @@ class CharacterClass(ChoiceEnum):
     WIZARD = 'wizard'
 
 
+class CharacterTemplate(Model):
+    class Meta:
+        db_table = 'mmo_character_template'
+        unique_together = ('race', 'character_class')
+
+    race = CharField(max_length=6, choices=Race.choices())
+    character_class = CharField(max_length=8, choices=CharacterClass.choices())
+    animations = mysql_models.JSONField()
+    sprite_sheet = CharField(max_length=32)
+
+
 class Character(Model):
     class Meta:
         db_table = 'mmo_character'
 
     user = ForeignKey(User, on_delete=CASCADE)
     name = CharField(max_length=32)
-    race = CharField(max_length=6, choices=Race.choices())
-    character_class = CharField(max_length=7, choices=CharacterClass.choices())
     level = IntegerField(default=1)
-    sprite_sheet = CharField(max_length=32)
-    animations = mysql_models.JSONField()
+    experience = IntegerField(default=0)
+    template = ForeignKey(CharacterTemplate, on_delete=CASCADE)

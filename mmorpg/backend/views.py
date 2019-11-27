@@ -9,8 +9,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from mmorpg.backend.models import Character
-from mmorpg.backend.serializers import UserSerializer, GroupSerializer, TokenSerializer, CharacterSerializer
+from mmorpg.backend.models import Character, CharacterTemplate
+from mmorpg.backend.serializers import UserSerializer, GroupSerializer, TokenSerializer, CharacterSerializer, \
+    CharacterTemplateSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -43,18 +44,43 @@ class SignupView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
         name_exists = User.objects.filter(username=request.data['username']).exists()
         if name_exists:
             response = Response(status=status.HTTP_409_CONFLICT, data='Username already exists')
         else:
-            user = User.objects.create(
+            user = User.objects.create_user(
                 username=request.data['username'],
                 password=request.data['password']
             )
             response = Response(UserSerializer(user).data)
 
         return response
+
+
+class CharacterTemplateView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, template_id=None):
+        if template_id is not None:
+            template = CharacterTemplate.objects.get(id=template_id)
+            serializer = CharacterTemplateSerializer(template)
+            return Response(serializer.data)
+        else:
+            templates = CharacterTemplate.objects.all()
+            serializer = CharacterTemplateSerializer(templates, many=True)
+            return Response(serializer.data)
+
+    def post(self, request):
+        if request.user.username == 'admin':
+            template = CharacterTemplate.objects.create(
+                race=request.data.get('race'),
+                character_class=request.data.get('charClass'),
+                sprite_sheet=request.data.get('spriteSheet'),
+                animations=json.loads(request.data.get('animations'))
+            )
+            return Response(CharacterTemplateSerializer(template).data)
+        else:
+            return Response(status.HTTP_401_UNAUTHORIZED)
 
 
 class CharacterView(APIView):

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework.serializers import HyperlinkedModelSerializer, Serializer, CharField, ModelSerializer
 from rest_framework_jwt.settings import api_settings
 
-from mmorpg.backend.models import Character
+from mmorpg.backend.models import Character, CharacterTemplate
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -35,14 +35,24 @@ class TokenSerializer(ModelSerializer):
         }
 
 
+class CharacterTemplateSerializer(ModelSerializer):
+    class Meta:
+        model = CharacterTemplate
+        fields = ('id', 'race', 'animations')
+
+    def to_representation(self, instance):
+        ret = super(CharacterTemplateSerializer, self).to_representation(instance)
+        ret['characterClass'] = instance.character_class
+        ret['spriteSheet'] = instance.sprite_sheet
+        return ret
+
+
 class CharacterSerializer(ModelSerializer):
+    template = CharacterTemplateSerializer
     class Meta:
         model = Character
-        fields = ('id', 'name', 'race', 'level')
+        fields = ('id', 'name', 'template', 'level')
 
     def to_representation(self, instance):
         ret = super(CharacterSerializer, self).to_representation(instance)
-        ret['charClass'] = instance.character_class
-        ret['spriteSheet'] = instance.sprite_sheet
-        ret['walkAnimation'] = json.loads(instance.animations)
         return ret
