@@ -1,13 +1,21 @@
-
+import * as _ from 'lodash';
 
 export class PlayerControls {
   private scene: Phaser.Scene;
   private sprite: Phaser.GameObjects.Sprite;
   private target: Phaser.GameObjects.Sprite;
+  private moveKeys;
+  private currentDirection: string = 'south';
 
   constructor(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite) {
     this.scene = scene;
     this.sprite = sprite;
+    this.moveKeys = scene.input.keyboard.addKeys({
+      north: Phaser.Input.Keyboard.KeyCodes.W,
+      west: Phaser.Input.Keyboard.KeyCodes.A,
+      south: Phaser.Input.Keyboard.KeyCodes.S,
+      east: Phaser.Input.Keyboard.KeyCodes.D
+    });
 
     this.target = scene.physics.add.sprite(200, 200, 'target').setDisplaySize(25, 25).setOrigin(0.5, 0.5);
 
@@ -23,14 +31,27 @@ export class PlayerControls {
         this.target.y += pointer.movementY;
       }
     }, this);
+
   }
 
-  public rotatePlayer() {
-    if (this.scene.input.mouse.locked) {
-      const mouseAngle = Phaser.Math.Angle.Between(this.sprite.x, this.sprite.y, this.target.x, this.target.y);
-      const faceAngle = this.determineFacingDirection(mouseAngle);
-      this.sprite.anims.load(`player-${faceAngle}`);
-      //this.sprite.setFrame(1);
+  public movePlayer() {
+    this.updatePlayerPosition();
+    this.setAnimation();
+  }
+
+  private updatePlayerPosition(): void {
+    if (this.moveKeys.north.isDown) {
+      this.sprite.y -= 4;
+    }
+    if (this.moveKeys.south.isDown) {
+      this.sprite.y += 4;
+    }
+
+    if (this.moveKeys.east.isDown) {
+      this.sprite.x += 4;
+    }
+    if (this.moveKeys.west.isDown) {
+      this.sprite.x -= 4;
     }
   }
 
@@ -49,5 +70,22 @@ export class PlayerControls {
     }
     console.log(`bad angle: ${angle}`);
     return 'ERROR';
+  }
+
+  private setAnimation(): void {
+    const mouseAngle = Phaser.Math.Angle.Between(this.sprite.x, this.sprite.y, this.target.x, this.target.y);
+    const faceAngle = this.determineFacingDirection(mouseAngle);
+    const isMoving = _(this.moveKeys).map((val, key) => val).find(key => key.isDown);
+
+    if (faceAngle !== this.currentDirection) {
+      this.sprite.anims.play(`player-${faceAngle}`);
+      this.currentDirection = faceAngle;
+    }
+
+    if (!isMoving) {
+      this.sprite.anims.pause(this.sprite.anims.currentAnim.frames[1]);
+    }else if (!this.sprite.anims.isPlaying) {
+      this.sprite.anims.play(`player-${faceAngle}`);
+    }
   }
 }

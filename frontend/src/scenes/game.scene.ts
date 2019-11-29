@@ -1,7 +1,7 @@
 import {Character} from "../intefaces/character.interface";
 import {PlayerControls} from "../services/player.controls";
 import * as img from "../assets/menu_background.jpg";
-import * as target from "../assets/target.png";
+import * as target from "../assets/reticle.png";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -42,7 +42,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   public realCreate(event) {
-    console.log(event);
     const background = this.add.image(0, 0, 'login-background')
       .setOrigin(0, 0)
       .setDisplaySize(window.innerWidth, window.innerHeight);
@@ -54,42 +53,24 @@ export class GameScene extends Phaser.Scene {
 
   public update(): void {
     if (this.playerControls) {
-      //console.log('rotating');
-      this.playerControls.rotatePlayer();
+      this.playerControls.movePlayer();
     }
   }
 
   public createSprite(name: string, x: number = 200, y: number = 200): Phaser.GameObjects.Sprite {
     const sprite = this.add.sprite(x, y, name).setName(`${name}-sprite`);
 
-    this.anims.create({
-      key: `${name}-south`,
-      frames: this.anims.generateFrameNumbers(name, this.playerCharacter.template.animations.south),
-      frameRate: 6,
-      repeat: -1
-    });
-    this.anims.create({
-      key: `${name}-north`,
-      frames: this.anims.generateFrameNumbers(name, this.playerCharacter.template.animations.north),
-      frameRate: 6,
-      repeat: -1
-    });
-    this.anims.create({
-      key: `${name}-east`,
-      frames: this.anims.generateFrameNumbers(name, this.playerCharacter.template.animations.east),
-      frameRate: 6,
-      repeat: -1
-    });
-    this.anims.create({
-      key: `${name}-west`,
-      frames: this.anims.generateFrameNumbers(name, this.playerCharacter.template.animations.west),
-      frameRate: 6,
-      repeat: -1
+    ['north', 'south', 'east', 'west'].forEach(direction => {
+      this.anims.create({
+        key: `${name}-${direction}`,
+        frames: this.anims.generateFrameNumbers(name, this.playerCharacter.template.animations[direction]),
+        frameRate: 6,
+        repeat: -1
+      })
     });
 
     sprite.anims.load(`${name}-south`);
     sprite.setFrame(1);
     return sprite;
-    //sprite.anims.play(`${name}-anim`);
   }
 }
