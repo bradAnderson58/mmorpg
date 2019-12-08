@@ -10,3 +10,5 @@ declare module '*.jpg' {
 }
 
 declare module '*.ttf';
+
+declare var API_URL: string;

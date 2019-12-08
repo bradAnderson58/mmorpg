@@ -1,13 +1,12 @@
 import axios, {AxiosPromise} from 'axios';
 
 export class AccountService {
-  private static readonly BASE_URL: string = "http://localhost:8000/";
 
 
   public static create(username: string, password: string): AxiosPromise {
     return axios({
       method: 'post',
-      url: `${this.BASE_URL}api/signup/`,
+      url: `${API_URL}api/signup/`,
       data: {
         username: username,
         password: password
@@ -18,7 +17,7 @@ export class AccountService {
   public static login(username: string, password: string): AxiosPromise {
     return axios({
       method: 'post',
-      url: `${this.BASE_URL}auth/login/`,
+      url: `${API_URL}auth/login/`,
       data: {
         username: username,
         password: password

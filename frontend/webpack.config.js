@@ -2,79 +2,90 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = {
-  entry: {
-    app: './src/main.ts',
-    vendors: ['phaser']
-  },
+var API_URL = {
+  production: JSON.stringify('http://54.193.125.233:8000/'),
+  developement: JSON.stringify('http://localhost:8000/')
+};
 
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      },
-      {
-        test:/\.css/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
-      },
-      {
-        test: /\.html/,
-        use: 'file-loader'
-      },
-      {
-        test: /\.(gif|png|jpe?g|svg|xml)$/i,
-        use: "file-loader"
-      },
-      {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'file-loader'
-      }
-    ]
-  },
+module.exports = env => {
+  var api = (env && env.production) ? API_URL.production : API_URL.developement;
+  console.log(api);
 
-  devtool: 'inline-source-map',
+  return {
+    entry: {
+      app: './src/main.ts',
+      vendors: ['phaser']
+    },
 
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js']
-  },
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/
+        },
+        {
+          test: /\.css/,
+          use: [
+            'style-loader',
+            'css-loader'
+          ]
+        },
+        {
+          test: /\.html/,
+          use: 'file-loader'
+        },
+        {
+          test: /\.(gif|png|jpe?g|svg|xml)$/i,
+          use: "file-loader"
+        },
+        {
+          test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+          use: 'file-loader'
+        }
+      ]
+    },
 
-  output: {
-    filename: 'app.bundle.js',
-    path: path.resolve(__dirname, 'dist')
-  },
+    devtool: 'inline-source-map',
 
-  mode: 'development',
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js']
+    },
 
-  devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
-    https: true
-  },
+    output: {
+      filename: 'app.bundle.js',
+      path: path.resolve(__dirname, 'dist')
+    },
 
-  plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, 'src/index.html'),
-        to: path.resolve(__dirname, 'dist')
-      }
-    ]),
-    new webpack.DefinePlugin({
-      'typeof CANVAS_RENDERER': JSON.stringify(true),
-      'typeof WEBGL_RENDERER': JSON.stringify(true)
-    }),
-  ],
+    mode: 'development',
 
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        commons: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all'
+    devServer: {
+      contentBase: path.resolve(__dirname, 'dist'),
+      https: true
+    },
+
+    plugins: [
+      new CopyWebpackPlugin([
+        {
+          from: path.resolve(__dirname, 'src/index.html'),
+          to: path.resolve(__dirname, 'dist')
+        }
+      ]),
+      new webpack.DefinePlugin({
+        'typeof CANVAS_RENDERER': JSON.stringify(true),
+        'typeof WEBGL_RENDERER': JSON.stringify(true),
+        'API_URL': api
+      }),
+    ],
+
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
         }
       }
     }

@@ -74,7 +74,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mmo_db',
         'USER': 'db_user',
-        'PASSWORD': os.environ.get('TF_VAR_mmo_db_password'),
+        'PASSWORD': cfg['db_password'],
         'HOST': 'mmo-db.ci0kbpmmntjq.us-west-1.rds.amazonaws.com',
         'PORT': 3306
     }
