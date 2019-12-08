@@ -1,20 +1,23 @@
 import datetime
 import os
+import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+with open(os.path.join(BASE_DIR, 'configs.yaml'), 'r') as ymlfile:
+    cfg = yaml.load(ymlfile)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*nzr(%7u!cokd-o-98=7=w_=eykl3(epa=sm%0&$@#(2hg(y*v'
+SECRET_KEY = cfg['secret_key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = cfg['debug']
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = cfg['allowed_hosts']
 
 
 # Application definition
