@@ -1,7 +1,6 @@
 import * as Phaser from "phaser";
 import * as _ from 'lodash';
 import * as img from "../assets/menu_background.jpg";
-//import * as font from "../assets/ancient_modern.png";
 import {TextButton} from "../ui-objects/text-button";
 import {MenuContainer} from "../ui-objects/menu-container";
 import {InputField} from "../ui-objects/input-field";
@@ -38,7 +37,6 @@ export class LoginScene extends Phaser.Scene {
     }
     this.loading = this.add.text(20, 20, "Loading Game...");
     this.load.image('login-background', img);
-    //this.load.bitmapFont('ancient_modern', font);
   }
 
   public create() {

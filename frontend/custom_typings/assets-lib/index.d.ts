@@ -9,7 +9,4 @@ declare module '*.jpg' {
   export = value;
 }
 
-declare module '*.ttf';
-declare module '*.woff';
-
 declare var API_URL: string;
