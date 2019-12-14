@@ -35,7 +35,7 @@ export class MenuContainer extends CleanContainer {
       return this.scene.add.text(0,0,'',{});
     }
     const headerStyle = {
-      fontFamily: 'myfont',
+      fontFamily: 'gamefont',
       fill: "#6c855d",
       fontSize: '64px'
     };

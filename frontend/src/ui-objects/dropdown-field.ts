@@ -6,7 +6,7 @@ export class DropdownField extends Phaser.GameObjects.DOMElement {
 
   constructor(scene: Phaser.Scene, x: number, y: number, label: string) {
 
-    super(scene, x, y, 'select', 'font: 32px myfont');
+    super(scene, x, y, 'select', 'font: 32px gamefont');
     this.setOrigin(0,0);
     this.setClassName(`${label}-dropdown`);
 

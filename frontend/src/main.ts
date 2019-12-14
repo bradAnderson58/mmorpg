@@ -1,3 +1,5 @@
+import './styles/style.css';
+
 import * as Phaser from 'phaser';
 import {LoginScene} from "./scenes/login.scene";
 import {MenuScene} from "./scenes/menu.scene";

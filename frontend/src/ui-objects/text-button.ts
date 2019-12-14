@@ -13,7 +13,7 @@ export class TextButton extends Phaser.GameObjects.Text {
   ) {
     const buttonStyle = {
       color: '#9fb364',
-      fontFamily: 'myfont',
+      fontFamily: 'gamefont',
       fontSize: '32px',
       fixedWidth: 200,
       align: 'center',

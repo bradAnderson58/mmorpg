@@ -1,8 +1,7 @@
 import * as Phaser from "phaser";
 import * as _ from 'lodash';
-import '../styles/style.css';
 import * as img from "../assets/menu_background.jpg";
-import * as font from "../assets/ancient_modern.png";
+//import * as font from "../assets/ancient_modern.png";
 import {TextButton} from "../ui-objects/text-button";
 import {MenuContainer} from "../ui-objects/menu-container";
 import {InputField} from "../ui-objects/input-field";
@@ -39,7 +38,7 @@ export class LoginScene extends Phaser.Scene {
     }
     this.loading = this.add.text(20, 20, "Loading Game...");
     this.load.image('login-background', img);
-    this.load.bitmapFont('myfont', font);
+    //this.load.bitmapFont('ancient_modern', font);
   }
 
   public create() {
@@ -117,8 +116,8 @@ export class LoginScene extends Phaser.Scene {
   }
 
   private createSubmissionForm(submitLabel: string, submitCallback: () => void): Phaser.GameObjects.Container {
-    const nameLabel = new Phaser.GameObjects.Text(this, -130, -110, 'Username:', {fontFamily: 'myfont', color: '#9fb364'});
-    const passLabel = new Phaser.GameObjects.Text(this, -130, -20, 'Password:', {fontFamily: 'myfont', color: '#9fb364'});
+    const nameLabel = new Phaser.GameObjects.Text(this, -130, -110, 'Username:', {fontFamily: 'gamefont', color: '#9fb364'});
+    const passLabel = new Phaser.GameObjects.Text(this, -130, -20, 'Password:', {fontFamily: 'gamefont', color: '#9fb364'});
 
     return new MenuInputContainer(
       this,
