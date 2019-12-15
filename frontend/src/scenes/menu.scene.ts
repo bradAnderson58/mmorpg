@@ -41,7 +41,7 @@ export class MenuScene extends Phaser.Scene {
   public preload(): void {
     this.loading = this.add.text(20, 20, 'Loading Game...');
     this.load.image('menu-background', background);
-    this.load.spritesheet('sample_knights_2x', sample, {frameWidth: 52, frameHeight: 72});
+    this.load.spritesheet('sample_knights_2x', sample, {frameWidth: 78, frameHeight: 108});
     this.load.spritesheet('chara5', char5, {frameWidth: 78, frameHeight: 108});
     this.load.spritesheet('chara2', char2, {frameWidth: 78, frameHeight: 108});
     this.load.spritesheet('chara3', char3, {frameWidth: 78, frameHeight: 108});
