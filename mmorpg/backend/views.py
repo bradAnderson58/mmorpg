@@ -12,6 +12,8 @@ from rest_framework.viewsets import ModelViewSet
 from mmorpg.backend.models import Character, CharacterTemplate
 from mmorpg.backend.serializers import UserSerializer, GroupSerializer, TokenSerializer, CharacterSerializer, \
     CharacterTemplateSerializer
+from mmorpg.backend.services import character_services
+from mmorpg.backend.services.user_services import username_exists, create_user
 
 
 class UserViewSet(ModelViewSet):
@@ -44,15 +46,12 @@ class SignupView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        name_exists = User.objects.filter(username=request.data['username']).exists()
+        name_exists = username_exists(request.data['username'])
         if name_exists:
             response = Response(status=status.HTTP_409_CONFLICT, data='Username already exists')
         else:
-            user = User.objects.create_user(
-                username=request.data['username'],
-                password=request.data['password']
-            )
-            response = Response(UserSerializer(user).data)
+            user = create_user(request.data['username'], request.data['password'])
+            response = Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
         return response
 
@@ -62,11 +61,11 @@ class CharacterTemplateView(APIView):
 
     def get(self, request, template_id=None):
         if template_id is not None:
-            template = CharacterTemplate.objects.get(id=template_id)
+            template = character_services.get_character_template_by_id(template_id)
             serializer = CharacterTemplateSerializer(template)
             return Response(serializer.data)
         else:
-            templates = CharacterTemplate.objects.all()
+            templates = character_services.get_all_character_templates()
             serializer = CharacterTemplateSerializer(templates, many=True)
             return Response(serializer.data)
 
@@ -88,37 +87,32 @@ class CharacterView(APIView):
 
     def get(self, request, character_id=None):
         if character_id is not None:
-            if self.has_permissions(request.user, character_id):
-                character = Character.objects.get(id=character_id)
+            if character_services.has_permissions_for_character(request.user.id, character_id):
+                character = character_services.get_character_by_id(character_id)
                 serializer = CharacterSerializer(character)
                 return Response(serializer.data)
             else:
                 return Response(status.HTTP_401_UNAUTHORIZED)
         else:
-            characters = Character.objects.filter(user_id=request.user.id)
+            characters = character_services.get_all_characters_by_user_id(request.user.id)
             serializer = CharacterSerializer(characters, many=True)
             return Response(serializer.data)
 
     def post(self, request):
-        character = Character.objects.create(
-            name=request.data.get('name'),
-            template_id=request.data.get('templateId'),
-            user=request.user,
-        )
-        return Response(CharacterSerializer(character).data)
+        if character_services.character_name_exists(request.data.get('name')):
+            response = Response(status=status.HTTP_409_CONFLICT, data='Character name already exists')
+        else:
+            character = character_services.create_character(
+                name=request.data.get('name'),
+                template_id=request.data.get('templateId'),
+                user_id=request.user.id,
+            )
+            response = Response(CharacterSerializer(character).data, status=status.HTTP_201_CREATED)
+        return response
 
     def delete(self, request, character_id=None):
-        if self.has_permissions(request.user, character_id):
-            Character.objects.get(id=character_id).delete()
-            return Response(status.HTTP_204_NO_CONTENT)
+        if character_services.has_permissions_for_character(request.user.id, character_id):
+            character_services.delete_character(character_id)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response(status.HTTP_401_UNAUTHORIZED)
-
-    @staticmethod
-    def has_permissions(user: User, character_id: int) -> bool:
-        return (
-            Character.objects
-            .filter(user_id=user.id)
-            .filter(id=character_id)
-            .exists()
-        )
+            return Response(status=status.HTTP_401_UNAUTHORIZED)

@@ -34,7 +34,7 @@ class Character(Model):
         db_table = 'mmo_character'
 
     user = ForeignKey(User, on_delete=CASCADE)
-    name = CharField(max_length=32)
+    name = CharField(max_length=32, unique=True)
     level = IntegerField(default=1)
     experience = IntegerField(default=0)
     template = ForeignKey(CharacterTemplate, on_delete=CASCADE)
