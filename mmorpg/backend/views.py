@@ -36,7 +36,7 @@ class LoginView(CreateAPIView):
         if user is not None:
             login(request, user)
             serializer = TokenSerializer(user)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -114,7 +114,8 @@ class CharacterView(APIView):
         else:
             return Response(status.HTTP_401_UNAUTHORIZED)
 
-    def has_permissions(self, user: User, character_id: int) -> bool:
+    @staticmethod
+    def has_permissions(user: User, character_id: int) -> bool:
         return (
             Character.objects
             .filter(user_id=user.id)
