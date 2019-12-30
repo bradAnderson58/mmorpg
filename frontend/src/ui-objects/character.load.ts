@@ -24,7 +24,7 @@ export class CharacterLoad extends CleanContainer {
 
   public cleanDestroy(): void {
     this.menuInput.destroy();
-    this.characterDisplay.destroy();
+    this.characterDisplay.cleanDestroy();
     this.destroy();
   }
 
