@@ -50,7 +50,7 @@ export class LoginScene extends Phaser.Scene {
   }
 
   public update(time: number, delta: number): void {
-    const cursorKeys = this.input.keyboard.createCursorKeys();
+    //const cursorKeys = this.input.keyboard.createCursorKeys();
   }
 
   private loginMenuAction(): void {
