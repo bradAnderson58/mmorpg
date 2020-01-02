@@ -1,10 +1,9 @@
 import './styles/style.css';
 
-/*import * as Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import {LoginScene} from "./scenes/login.scene";
 import {MenuScene} from "./scenes/menu.scene";
 import {GameScene} from "./scenes/game.scene";
-
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'MORPG',
@@ -28,7 +27,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   scene: [LoginScene, MenuScene, GameScene],
 };
 
-export const game = new Phaser.Game(gameConfig);*/
+export const game = new Phaser.Game(gameConfig);
 
 export function isInternalLink(link: string): boolean {
   return false;
