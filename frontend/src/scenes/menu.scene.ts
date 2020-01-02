@@ -4,6 +4,8 @@ import * as sample from "../assets/sample_knights_2x.png";
 import * as char5 from "../assets/chara5.png";
 import * as char2 from "../assets/chara2.png";
 import * as char3 from "../assets/chara3.png";
+import * as titleSong from "../assets/audio/title_screen.mp3";
+
 import {MenuContainer} from "../ui-objects/menu-container";
 import {TextButton} from "../ui-objects/text-button";
 import {StorageService} from "../services/storage.service";
@@ -13,6 +15,7 @@ import {CharacterService} from "../services/character.service";
 import {MessageService} from "../services/message.service";
 import {Character} from "../intefaces/character.interface";
 import {CleanContainer} from "../ui-objects/clean.container";
+import {SceneService} from "../services/scene.service";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -41,6 +44,8 @@ export class MenuScene extends Phaser.Scene {
   public preload(): void {
     this.loading = this.add.text(20, 20, 'Loading Game...');
     this.load.image('menu-background', background);
+    this.load.audio('game-music', titleSong);
+
     this.load.spritesheet('sample_knights_2x', sample, {frameWidth: 78, frameHeight: 108});
     this.load.spritesheet('chara5', char5, {frameWidth: 78, frameHeight: 108});
     this.load.spritesheet('chara2', char2, {frameWidth: 78, frameHeight: 108});
@@ -51,6 +56,8 @@ export class MenuScene extends Phaser.Scene {
     this.background = this.add.image(0, 0, 'menu-background')
       .setOrigin(0,0)
       .setDisplaySize(window.innerWidth, window.innerHeight);
+
+    SceneService.playMusic('game-music', this.sound, true);
 
     this.add.text(50, 50, StorageService.getUserName(), {
       fontFamily: 'gamefont',

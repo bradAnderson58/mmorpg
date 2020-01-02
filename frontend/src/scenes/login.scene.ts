@@ -1,6 +1,9 @@
 import * as Phaser from "phaser";
 import * as _ from 'lodash';
+
 import * as img from "../assets/menu_background.jpg";
+import * as titleSong from "../assets/audio/title_screen.mp3";
+
 import {TextButton} from "../ui-objects/text-button";
 import {MenuContainer} from "../ui-objects/menu-container";
 import {InputField} from "../ui-objects/input-field";
@@ -8,6 +11,7 @@ import {MenuInputContainer} from "../ui-objects/menu-input-container";
 import {AccountService} from "../services/account.service";
 import {MessageService} from "../services/message.service";
 import {StorageService} from "../services/storage.service";
+import {SceneService} from "../services/scene.service";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -21,6 +25,7 @@ export class LoginScene extends Phaser.Scene {
   private background: Phaser.GameObjects.Image;
   private midX: number;
   private midY: number;
+  private doCreate: boolean = true;
 
   constructor() {
     super(sceneConfig);
@@ -33,10 +38,13 @@ export class LoginScene extends Phaser.Scene {
 
   public preload(): void {
     if (StorageService.isLoggedIn()) {
+      console.log('starting menu scene');
+      this.doCreate = false;
       this.scene.start('MenuScene');
     }
     this.loading = this.add.text(20, 20, "Loading Game...");
     this.load.image('login-background', img);
+    this.load.audio('game-music', titleSong);
   }
 
   public create() {
@@ -44,9 +52,14 @@ export class LoginScene extends Phaser.Scene {
       .setOrigin(0, 0)
       .setDisplaySize(window.innerWidth, window.innerHeight);
 
-    this.menuContainer = this.mainMenuContainer();
+    if (this.doCreate) {
+      console.log('starting login scene');
+      SceneService.playMusic('game-music', this.sound, true);
 
-    this.loading.destroy();
+      this.menuContainer = this.mainMenuContainer();
+
+      this.loading.destroy();
+    }
   }
 
   public update(time: number, delta: number): void {

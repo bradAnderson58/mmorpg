@@ -9,4 +9,9 @@ declare module '*.jpg' {
   export = value;
 }
 
+declare module '*.mp3' {
+  const value: any;
+  export = value;
+}
+
 declare var API_URL: string;

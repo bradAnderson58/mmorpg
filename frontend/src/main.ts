@@ -29,6 +29,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
 
 export const game = new Phaser.Game(gameConfig);
 
+// TODO: this is only here for testing jest tests, remove once get phaser mocks working
 export function isInternalLink(link: string): boolean {
   return false;
 }

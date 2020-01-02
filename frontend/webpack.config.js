@@ -42,6 +42,10 @@ module.exports = env => {
         {
           test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
           use: 'file-loader'
+        },
+        {
+          test: /\.(mp3|ogg)$/,
+          use: 'file-loader'
         }
       ]
     },
