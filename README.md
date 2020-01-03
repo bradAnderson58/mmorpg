@@ -12,7 +12,8 @@ in top level dir run the following commands (note you should be on python 3.7):
 `pip install -r requirements.txt`
 `python manage.py runserver` - this will serve the backend on http://localhost:8000
 
-thats it for now
+For multiplayer functionality, a redis store is required but it can just be run in a docker container. Do this:
+`docker run -p 6379:6379 redis:2.8`
 
 ## deploy frontend:
 in `/frontend` run the following commands (build pipeline not currently automated):
