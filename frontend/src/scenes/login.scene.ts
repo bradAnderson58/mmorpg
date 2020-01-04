@@ -8,7 +8,7 @@ import {TextButton} from "../ui-objects/text-button";
 import {MenuContainer} from "../ui-objects/menu-container";
 import {InputField} from "../ui-objects/input-field";
 import {MenuInputContainer} from "../ui-objects/menu-input-container";
-import {AccountService} from "../services/account.service";
+import {AccountService} from "../services/api-services/account.service";
 import {MessageService} from "../services/message.service";
 import {StorageService} from "../services/storage.service";
 import {SceneService} from "../services/scene.service";

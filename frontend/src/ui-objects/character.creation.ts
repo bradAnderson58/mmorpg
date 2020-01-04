@@ -3,13 +3,13 @@ import * as _ from 'lodash';
 import {MenuInputContainer} from "./menu-input-container";
 import {TextButton} from "./text-button";
 import {DropdownField} from "./dropdown-field";
-import {CharacterService} from "../services/character.service";
+import {CharacterService} from "../services/api-services/character.service";
 import {InputField} from "./input-field";
 import {MessageService} from "../services/message.service";
 import {CharacterDisplay} from "./character.display";
 import {CharacterTemplate} from "../intefaces/character.interface";
 import {CleanContainer} from "./clean.container";
-
+import Text = Phaser.GameObjects.Text;
 
 export class CharacterCreation extends CleanContainer {
   private menuInput: MenuInputContainer;
@@ -39,9 +39,9 @@ export class CharacterCreation extends CleanContainer {
   }
 
   private createMenu(x: number, y: number): void {
-    const nameLabel = new Phaser.GameObjects.Text(this.scene, -125, -140, 'Name:', {fontFamily: 'gamefont', color: '#9fb364'});
-    const classLabel = new Phaser.GameObjects.Text(this.scene, -150, -55, 'Class:', {fontFamily: 'gamefont', color: '#9fb364'});
-    const raceLabel = new Phaser.GameObjects.Text(this.scene, 60, -55, 'Race:', {fontFamily: 'gamefont', color: '#9fb364'});
+    const nameLabel = new Text(this.scene, -125, -140, 'Name:', {fontFamily: 'gamefont', color: '#9fb364'});
+    const classLabel = new Text(this.scene, -150, -55, 'Class:', {fontFamily: 'gamefont', color: '#9fb364'});
+    const raceLabel = new Text(this.scene, 60, -55, 'Race:', {fontFamily: 'gamefont', color: '#9fb364'});
 
     const classDropdown = new DropdownField(this.scene, -150, -30, 'charClass')
       .setUpdateCallback((value: string) => this.switchClassSprite(value))

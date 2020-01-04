@@ -2,6 +2,7 @@ import {Character} from "../intefaces/character.interface";
 import {PlayerControls} from "../services/player.controls";
 import * as img from "../assets/menu_background.jpg";
 import * as target from "../assets/reticle.png";
+import {ChatControls} from "../services/chat.controls";
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -14,6 +15,7 @@ export class GameScene extends Phaser.Scene {
   private playerCharacter: Character;
   private characterSprite: Phaser.GameObjects.Sprite;
   private playerControls: PlayerControls;
+  private chatControls: ChatControls;
 
   constructor() {
     super(sceneConfig);
@@ -49,12 +51,18 @@ export class GameScene extends Phaser.Scene {
     this.characterSprite = this.createSprite('player');
     this.cameras.main.startFollow(this.characterSprite);
     this.playerControls = new PlayerControls(this, this.characterSprite);
+    this.chatControls = new ChatControls(this);
   }
 
   public update(): void {
     if (this.playerControls) {
-      this.playerControls.movePlayer();
+      if (this.chatControls.notChatting()) {
+        this.playerControls.movePlayer();
+      } else {
+        this.playerControls.pausePlayer();
+      }
     }
+
   }
 
   public createSprite(name: string, x: number = 200, y: number = 200): Phaser.GameObjects.Sprite {

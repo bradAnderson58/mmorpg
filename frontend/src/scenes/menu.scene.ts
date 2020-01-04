@@ -11,7 +11,7 @@ import {TextButton} from "../ui-objects/text-button";
 import {StorageService} from "../services/storage.service";
 import {CharacterCreation} from "../ui-objects/character.creation";
 import {CharacterLoad} from "../ui-objects/character.load";
-import {CharacterService} from "../services/character.service";
+import {CharacterService} from "../services/api-services/character.service";
 import {MessageService} from "../services/message.service";
 import {Character} from "../intefaces/character.interface";
 import {CleanContainer} from "../ui-objects/clean.container";
