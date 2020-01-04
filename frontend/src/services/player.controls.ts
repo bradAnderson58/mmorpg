@@ -1,15 +1,19 @@
 import * as _ from 'lodash';
+import {CharacterTemplate} from "../intefaces/character.interface";
+import Sprite = Phaser.GameObjects.Sprite;
+import Scene = Phaser.Scene;
 
 export class PlayerControls {
-  private scene: Phaser.Scene;
-  private sprite: Phaser.GameObjects.Sprite;
-  private target: Phaser.GameObjects.Sprite;
+  private scene: Scene;
+  private sprite: Sprite;
+  private target: Sprite;
   private moveKeys;
   private currentDirection: string = 'south';
 
-  constructor(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite) {
+  constructor(scene: Scene, template: CharacterTemplate) {
     this.scene = scene;
-    this.sprite = sprite;
+    this.sprite = this.createSprite('player', template);
+    scene.cameras.main.startFollow(this.sprite);
     this.moveKeys = scene.input.keyboard.addKeys({
       north: Phaser.Input.Keyboard.KeyCodes.W,
       west: Phaser.Input.Keyboard.KeyCodes.A,
@@ -89,5 +93,21 @@ export class PlayerControls {
     if (!isMoving) {
       this.sprite.anims.pause(this.sprite.anims.currentAnim.frames[1]);
     }
+  }
+
+  private createSprite(name: string, template: CharacterTemplate, x: number = 200, y: number = 200): Sprite {
+    const sprite = this.scene.add.sprite(x, y, name).setName(`${name}-sprite`);
+    ['north', 'south', 'east', 'west'].forEach(direction => {
+      this.scene.anims.create({
+        key: `${name}-${direction}`,
+        frames: this.scene.anims.generateFrameNumbers(name, template.animations[direction]),
+        frameRate: 6,
+        repeat: -1,
+      })
+    });
+
+    sprite.anims.load(`${name}-south`);
+    sprite.setFrame(1);
+    return sprite;
   }
 }
