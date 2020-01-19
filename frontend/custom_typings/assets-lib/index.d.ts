@@ -15,3 +15,4 @@ declare module '*.mp3' {
 }
 
 declare var API_URL: string;
+declare var WS_URL: string;

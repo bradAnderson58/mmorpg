@@ -4,12 +4,16 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var API_URL = {
   production: JSON.stringify('http://54.193.125.233:8000/'),
-  developement: JSON.stringify('http://localhost:8000/')
+  development: JSON.stringify('http://localhost:8000/')
+};
+var WS_URL = {
+  production: JSON.stringify('ws:/54.193.125.233:8000/'),
+  development: JSON.stringify('ws:/127.0.0.1:8000/')
 };
 
 module.exports = env => {
-  var api = (env && env.production) ? API_URL.production : API_URL.developement;
-  console.log(api);
+  const api = (env && env.production) ? API_URL.production : API_URL.development;
+  const ws = (env && env.production) ? WS_URL.production : WS_URL.development;
 
   return {
     entry: {
@@ -65,7 +69,7 @@ module.exports = env => {
 
     devServer: {
       contentBase: path.resolve(__dirname, 'dist'),
-      https: true
+      https: false
     },
 
     plugins: [
@@ -78,7 +82,8 @@ module.exports = env => {
       new webpack.DefinePlugin({
         'typeof CANVAS_RENDERER': JSON.stringify(true),
         'typeof WEBGL_RENDERER': JSON.stringify(true),
-        'API_URL': api
+        'API_URL': api,
+        'WS_URL': ws,
       }),
     ],
 

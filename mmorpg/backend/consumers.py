@@ -31,14 +31,14 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message,
+                'message': text_data_json['message'],
+                'sender': text_data_json['sender'],
             }
         )
 
     # receives a message from room group
     def chat_message(self, event):
-        message = event['message']
-
         self.send(text_data=json.dumps({
-            'message': message
+            'message': event['message'],
+            'sender': event['sender']
         }))

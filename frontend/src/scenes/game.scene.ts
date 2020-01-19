@@ -48,7 +48,7 @@ export class GameScene extends Phaser.Scene {
       .setDisplaySize(window.innerWidth, window.innerHeight);
 
     this.playerControls = new PlayerControls(this, this.playerCharacter.template);
-    this.chatControls = new ChatControls(this);
+    this.chatControls = new ChatControls(this, this.playerCharacter.name);
   }
 
   public update(): void {
